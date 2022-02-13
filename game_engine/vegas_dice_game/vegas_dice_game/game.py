@@ -14,7 +14,7 @@ class Game():
     def __init__(
         self,
         num_players : int = 4,
-        strategies = ["RandomStrategy", "RandomStrategy", "RandomStrategy", "JonahsGreatStrategy"]
+        strategies = ["RandomStrategy", "RandomStrategy", "RandomStrategy", "RandomStrategy"]
     ):
         self.engine = GameEngine(num_players=len(strategies))
         self.strategies = [strategy_registry[strategy_name]() for strategy_name in strategies]
