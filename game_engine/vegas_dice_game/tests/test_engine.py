@@ -1,5 +1,5 @@
-from vegas_dice_game.engine import Game
-from vegas_dice_game.game import GameEngine
+from vegas_dice_game.game import Game
+from vegas_dice_game.engine import GameEngine
 
 def test_setup():
     """A smoke test to verify that play_game executes without errors."""

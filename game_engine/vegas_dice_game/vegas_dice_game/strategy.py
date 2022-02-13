@@ -1,6 +1,6 @@
 import random
 
-from vegas_dice_game.game import GameState
+from vegas_dice_game.engine import GameState
 
 class Strategy():
     def choose(
