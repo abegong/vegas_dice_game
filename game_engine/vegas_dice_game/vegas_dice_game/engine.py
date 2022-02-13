@@ -6,21 +6,22 @@ from vegas_dice_game.names import generate_random_name
 
 @dataclass
 class Player():
-    # id_ : int
+    id_ : int
     name : str
     dice_remaining : int
     total_cash : int = 0
 
     def __str__(self):
-        return f'{self.name : >13} (${self.total_cash}) : {self.dice_remaining} dice remaining'
+        return f'{self.id_}: {self.name : >13} (${self.total_cash}) : {self.dice_remaining} dice remaining'
 
 @dataclass
 class Casino():
+    id_ : int
     payouts : List[int]
     placed_dice : List[int]
 
     def __str__(self):
-        string = ''
+        string = f'{self.id_}: '
         for count in self.placed_dice:
             string += f'{count : >3}'
         string += ' | '
@@ -51,10 +52,13 @@ class GameEngine():
         self,
         num_players = 4,
         num_casinos = 6,
+        num_dice = 8,
     ):
-        print(num_players, num_casinos)
-        self.players = self.create_players(num_players)
-        self.casinos = self.create_casinos(
+        self.players = self._create_players(
+            num_players=num_players,
+            num_dice=num_dice,
+        )
+        self.casinos = self._create_casinos(
             num_casinos=num_casinos,
             num_players=num_players,
         )
@@ -63,27 +67,29 @@ class GameEngine():
 
         self._get_next_roll()
         
-    def create_players(
+    def _create_players(
         self,
-        num_players
+        num_players,
+        num_dice,
     ) -> List[Player]:
         return [
             Player(
-                # id_ = i,
-                dice_remaining = 6,
+                id_ = i,
+                dice_remaining = num_dice,
                 total_cash = 0,
                 name = generate_random_name(),
             )
             for i in range(num_players)
         ]
     
-    def create_casinos(
+    def _create_casinos(
         self,
         num_casinos,
         num_players,
     ) -> List[Casino]:
         return [
             Casino(
+                id_ = i,
                 payouts = self._generate_payouts(),
                 placed_dice = [0 for i in range(num_players)]
             )
@@ -105,8 +111,6 @@ class GameEngine():
 
         self.players[self.next_player_id].dice_remaining -= dice_count
         self.casinos[casino_id].placed_dice[self.next_player_id] += dice_count
-
-        print(self.players)
 
         self._get_next_player()
         self._get_next_roll()
@@ -150,6 +154,47 @@ class GameEngine():
 
         return payouts
 
+    @staticmethod
+    def _score_casino(
+        casino : Casino
+    ) -> List[int]:
+        winning_player_id_sequence = []
+        placed_dice = [i for i in casino.placed_dice]
+
+        while placed_dice != [0 for i in placed_dice]:
+            max_dice = max(placed_dice)
+            number_equal_to_max = sum([1 for i in placed_dice if i == max_dice])
+
+            for i, j in enumerate(placed_dice):
+                if j == max_dice:
+                    # If there's an untied winner, add their id to the queue of winners
+                    if number_equal_to_max == 1:
+                        winning_player_id_sequence.append(i)
+
+                    #Either way, remove the dice counts from placed_dice
+                    placed_dice[i] = 0
+            
+        player_payouts = [0 for i in casino.placed_dice]
+        for i, player_id in enumerate(winning_player_id_sequence):
+            try:
+                player_payouts[player_id] += casino.payouts[i]
+            except IndexError:
+                break
+
+        return player_payouts
+
+    def _get_scores(
+        self
+    ) -> List[int]:
+        player_payouts = [0 for i in self.players]
+
+        for casino in self.casinos:
+            new_player_payouts = self._score_casino(casino)
+            for i, p in enumerate(new_player_payouts):
+                player_payouts[i] += p
+        
+        return player_payouts
+
     @property
     def state(self):
         return GameState(
@@ -173,6 +218,7 @@ class GameEngine():
 
         if self.next_player_id == -1:
             print(f'All players have placed all their dice. The game is over.')
+            print(self._get_scores())
 
         else:
             print(f'{self.players[self.next_player_id].name} is next, with this roll:')

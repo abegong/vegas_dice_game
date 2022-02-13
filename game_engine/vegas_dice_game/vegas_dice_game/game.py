@@ -3,7 +3,7 @@ import random
 from typing import List
 
 from vegas_dice_game.engine import GameEngine
-from vegas_dice_game.strategy import Strategy, RandomStrategy
+from vegas_dice_game.strategy import Strategy, InputStrategy, RandomStrategy
 
 
 class Game():
@@ -16,17 +16,17 @@ class Game():
         num_players : int = 4,
     ):
         self.engine = GameEngine()#num_players=num_players)
-        self.strategies = [RandomStrategy() for i in range(num_players)]
+        self.strategies = [RandomStrategy() for i in range(num_players-1)] + [InputStrategy()]
+        # self.strategies = [RandomStrategy() for i in range(num_players)]
 
     def play_game(
         self
     ):
-        for i in range(20):
+        while 1:
             next_player_id = self.engine.next_player_id
             game_state = self.engine.state
 
             self.engine.print_state()
-            # print(next_player_id)
 
             if next_player_id == -1:
                 break
