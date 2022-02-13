@@ -87,3 +87,10 @@ class JonahsNextGreatStrategy(Strategy):
             return max_payout_casino_id
         else:
             return random.choice(dice)
+
+
+strategy_registry = {
+    "RandomStrategy" : RandomStrategy,
+    "InputStrategy" : InputStrategy,
+    "JonahsGreatStrategy" : JonahsGreatStrategy,
+}
