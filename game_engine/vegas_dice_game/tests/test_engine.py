@@ -20,23 +20,23 @@ def test__any_players_with_dice_remain():
 
 def test__get_next_player():
     game = GameEngine()
-    assert game.player_turn == 0
+    assert game.next_player_id == 0
 
     game._get_next_player()
-    assert game.player_turn == 1
+    assert game.next_player_id == 1
     
     game._get_next_player()
-    assert game.player_turn == 2
+    assert game.next_player_id == 2
 
     game._get_next_player()
-    assert game.player_turn == 3
+    assert game.next_player_id == 3
 
     game._get_next_player()
-    assert game.player_turn == 0
+    assert game.next_player_id == 0
 
     # Zero out all players' dice
     for p in game.players:
         p.dice_remaining = 0
     
     game._get_next_player()
-    assert game.player_turn == -1
+    assert game.next_player_id == -1

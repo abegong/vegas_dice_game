@@ -35,7 +35,7 @@ class GameState():
     round_number : int
     players : List[Player]
     casinos : List[Casino]
-    player_turn : int
+    next_player_id : int
     next_roll : List[int]
 
 class GameEngine():
@@ -44,7 +44,7 @@ class GameEngine():
     players : List[Player]
     casinos : List[Casino]
 
-    player_turn : int
+    next_player_id : int
     next_roll : List[int]
 
     def __init__(
@@ -59,7 +59,7 @@ class GameEngine():
             num_players=num_players,
         )
         self.round_number = 0
-        self.player_turn = 0
+        self.next_player_id = 0
 
         self._get_next_roll()
         
@@ -93,7 +93,7 @@ class GameEngine():
     def _get_next_roll(
         self,
     ) -> List[int]:
-        dice = [random.randint(0, 5) for i in range(self.players[self.player_turn].dice_remaining)]
+        dice = [random.randint(0, 5) for i in range(self.players[self.next_player_id].dice_remaining)]
         dice.sort()
         self.next_roll = dice
 
@@ -103,8 +103,8 @@ class GameEngine():
     ) -> int:
         dice_count = sum([1 for i in self.next_roll if i == casino_id])
 
-        self.players[self.player_turn].dice_remaining -= dice_count
-        self.casinos[casino_id].placed_dice[self.player_turn] += dice_count
+        self.players[self.next_player_id].dice_remaining -= dice_count
+        self.casinos[casino_id].placed_dice[self.next_player_id] += dice_count
 
         print(self.players)
 
@@ -126,16 +126,16 @@ class GameEngine():
         If no players remain, return -1
         """
         if self._any_players_with_dice_remain() == False:
-            self.player_turn = -1
+            self.next_player_id = -1
             return
 
-        next_player_id = self.player_turn
+        next_player_id = self.next_player_id
         while 1:
             next_player_id = (next_player_id + 1) % len(self.players)
             if self.players[next_player_id].dice_remaining > 0:
                 break
         
-        self.player_turn = next_player_id
+        self.next_player_id = next_player_id
 
     def _generate_payouts(
         self,
@@ -156,7 +156,7 @@ class GameEngine():
             round_number=self.round_number,
             players=self.players,
             casinos=self.casinos,
-            player_turn=self.player_turn,
+            next_player_id=self.next_player_id,
             next_roll=self.next_roll,
         )
 
@@ -171,9 +171,9 @@ class GameEngine():
             print(casino)
         print()
 
-        if self.player_turn == -1:
+        if self.next_player_id == -1:
             print(f'All players have placed all their dice. The game is over.')
 
         else:
-            print(f'{self.players[self.player_turn].name} is next, with this roll:')
+            print(f'{self.players[self.next_player_id].name} is next, with this roll:')
             print("  "+(" ".join([str(i) for i in self.next_roll]) ))

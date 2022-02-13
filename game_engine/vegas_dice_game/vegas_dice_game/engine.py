@@ -22,16 +22,16 @@ class Game():
         self
     ):
         for i in range(20):
-            player_turn = self.engine.player_turn
+            next_player_id = self.engine.next_player_id
             game_state = self.engine.state
 
             self.engine.print_state()
-            # print(player_turn)
+            # print(next_player_id)
 
-            if player_turn == -1:
+            if next_player_id == -1:
                 break
             
-            choice = self.strategies[player_turn].choose(game_state)
+            choice = self.strategies[next_player_id].choose(game_state)
 
             print()
             print(f'> {choice}')
