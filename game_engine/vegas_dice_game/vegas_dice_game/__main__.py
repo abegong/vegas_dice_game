@@ -1,4 +1,5 @@
 import click
+import random
 
 @click.group()
 def cli():
@@ -10,9 +11,17 @@ def simulate(num_games):
     import pandas as pd
     from vegas_dice_game.game import Game
 
+    # strategies = ["RandomStrategy", "RandomStrategy", "RandomStrategy", "MLBasedStrategy"]
+    strategies = ["BinaryLogisticCasinoClassifierStrategy", "MultinomialLogisticCasinoClassifierStrategy", "MultinomialLogisticCasinoClassifierStrategy", "BinaryLogisticCasinoClassifierStrategy"]
+    # strategies = ["JonahsGreatStrategy", "JonahsGreatStrategy", "JonahsGreatStrategy", "BinaryLogisticCasinoClassifierStrategy"]
+
     scores = []
-    for i in range(1000):
-        my_game = Game()
+    for i in range(num_games):
+        print("X"*80)
+        # random.shuffle(strategies)
+        my_game = Game(
+            strategies = strategies
+        )
         new_scores = my_game.play_game(verbosity=0)
         scores.append(new_scores)
 
@@ -24,8 +33,9 @@ def play():
     import random
     from vegas_dice_game.game import Game
 
-    strategies = ["RandomStrategy", "RandomStrategy", "RandomStrategy", "InputStrategy"]
+    strategies = ["BinaryLogisticCasinoClassifierStrategy", "BinaryLogisticCasinoClassifierStrategy", "BinaryLogisticCasinoClassifierStrategy", "InputStrategy"]
     random.shuffle(strategies)
+
     my_game = Game(
         strategies = strategies
     )

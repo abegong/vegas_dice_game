@@ -7,9 +7,6 @@ def test_setup():
     game = Game()
     game.play_game()
 
-    assert False
-
-
 def test__any_players_with_dice_remain():
     game = GameEngine()
     assert game._any_players_with_dice_remain() == True
