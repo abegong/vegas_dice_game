@@ -1,3 +1,5 @@
+from dataclasses import asdict
+import json
 import random
 from typing import List
 
@@ -20,7 +22,8 @@ class RandomStrategy(Strategy):
 class InputStrategy(Strategy):
     def choose(
         self,
-        game_state : GameState
+        game_state : GameState,
+        log_file : str = "InputStrategy.log",
     ) -> int:
         dice = game_state.next_roll
 
@@ -28,9 +31,14 @@ class InputStrategy(Strategy):
             x = int(input('\nMake your choice: '))
 
             if x in dice:
-                return x
+                break
             else:
                 print(f"{x} isn't a valid entry in {dice}.")
+
+        with open(log_file, "a") as myfile:
+            myfile.write(str(x) + " " + json.dumps(asdict(game_state))+"\n")
+
+        return x
 
 class JonahsGreatStrategy(Strategy):
     def choose(
@@ -63,7 +71,7 @@ class JonahsGreatStrategy(Strategy):
 class JonahsNextGreatStrategy(Strategy):
     def choose(
         self,
-        game_state : GameState
+        game_state : GameState,
     ) -> int:
 
         print("=============== JONAH THE GREAT WAS HERE ===============")

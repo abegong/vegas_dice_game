@@ -21,10 +21,13 @@ def simulate(num_games):
 
 @click.command()
 def play():
+    import random
     from vegas_dice_game.game import Game
 
+    strategies = ["RandomStrategy", "RandomStrategy", "RandomStrategy", "InputStrategy"]
+    random.shuffle(strategies)
     my_game = Game(
-        strategies = ["RandomStrategy", "RandomStrategy", "RandomStrategy", "InputStrategy"]
+        strategies = strategies
     )
     new_scores = my_game.play_game()
 
